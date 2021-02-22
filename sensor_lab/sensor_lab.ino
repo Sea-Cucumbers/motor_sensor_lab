@@ -1,5 +1,4 @@
-#include <DHT_U.h>
-#include <DHT.h>
+#include <dht.h>
 
 #define ULTRASONIC_TRIG_PIN 13
 #define ULTRASONIC_ECHO_PIN 22
@@ -17,7 +16,7 @@ double ir_cm_prev = 0;
 int ir_window[IR_WINDOW_SIZE];
 unsigned int ir_curr_entry = 0;
 
-DHT dht(DHT_PIN, DHT_TYPE);
+dht DHT;
 
 void init_ir_window(){
   for (int i = 0; i < IR_WINDOW_SIZE; i++){
@@ -77,10 +76,9 @@ void loop() {
      -  2.8890824514025209e-012 * pow(ir_val_avg,5));
 
   // Temp/humidity code
-  int hum = dht.readHumidity();
-  float temp_c = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  float temp_f = dht.readTemperature(true);
+  int chk = DHT.read11(DHT_PIN);
+  float hum = DHT.humidity;
+  float temp_c = DHT.temperature;
 
   Serial.print("Potentiometer: ");
   Serial.print(pot_degrees);
@@ -90,8 +88,6 @@ void loop() {
   Serial.print(ir_cm);
   Serial.print("\t Temperature (C): ");
   Serial.print(temp_c);
-  Serial.print("\t Temperature (F): ");
-  Serial.print(temp_f);
   Serial.print("\t Humidity: ");
   Serial.println(hum);
   
