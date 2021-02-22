@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -7,47 +8,61 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    socket = new QTcpSocket(this);
-    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+    serialBuf = "";
 
-    qDebug() << "Connecting,..";
+    serial.setPortName("ttyACM0");
+    if(!serial.setBaudRate(QSerialPort::Baud9600))
+        qDebug() << serial.errorString();
+    if(!serial.setDataBits(QSerialPort::Data7))
+        qDebug() << serial.errorString();
+    if(!serial.setParity(QSerialPort::EvenParity))
+        qDebug() << serial.errorString();
+    if(!serial.setFlowControl(QSerialPort::HardwareControl))
+        qDebug() << serial.errorString();
+    if(!serial.setStopBits(QSerialPort::OneStop))
+        qDebug() << serial.errorString();
+    if(!serial.open(QIODevice::ReadOnly))
+        qDebug() << serial.errorString();
 
-    socket->connectToHost("10.0.0.153", 65432);
-}
+    QObject::connect(&serial, &QSerialPort::readyRead, this, &MainWindow::readyRead);
+    QObject::connect(&serial,
+                     static_cast<void(QSerialPort::*)(QSerialPort::SerialPortError)>
+                     (&QSerialPort::error),
+                     [&](QSerialPort::SerialPortError error)
+    {
+        //this is called when a serial communication error occurs
+        qDebug() << "An error occured: " << error;
+    });
 
-void MainWindow::connected()
-{
-    qDebug() << "Connected!";
-}
-
-void MainWindow::disconnected()
-{
-    qDebug() << "Disconnected!";
-}
-
-void MainWindow::bytesWritten(qint64 bytes)
-{
-    qDebug() << "We wrote: " << bytes;
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::timerDown);
+    timer->start(100);
 }
 
 void MainWindow::readyRead()
 {
-    qDebug() << "Reading...";
-    QString received(socket->readAll());
-    if (received.indexOf("us") >= 0) {
-        ui->ultrasonicTextEdit->setPlainText(received);
-     }
+    serialBuf.append(serial.readAll());
+}
+
+void MainWindow::timerDown()
+{
+    int newlineIdx = serialBuf.indexOf('\n');
+    if (newlineIdx < 0) {
+        return;
+    }
+
+    QByteArray show = serialBuf.left(newlineIdx);
+    if (show.indexOf("us") >= 0) {
+        ui->ultrasonicTextEdit->setPlainText(show);
+    }
+
+    // TODO: add conditionals for other GUI components
+
+    serialBuf = serialBuf.remove(0, newlineIdx + 1);
 }
 
 MainWindow::~MainWindow()
 {
-    if(!socket->waitForDisconnected(1000))
-    {
-        qDebug() << "Error: " << socket->errorString();
-    }
     delete ui;
 }
 

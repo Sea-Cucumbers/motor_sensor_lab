@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../motor_sensor_gui -I. -I/home/noopygbhat/anaconda3/include/qt -I/home/noopygbhat/anaconda3/include/qt/QtWidgets -I/home/noopygbhat/anaconda3/include/qt/QtGui -I/home/noopygbhat/anaconda3/include/qt/QtNetwork -I/home/noopygbhat/anaconda3/include/qt/QtCore -I. -I. -I/home/noopygbhat/anaconda3/mkspecs/linux-g++
+INCPATH       = -I../motor_sensor_gui -I. -I/home/noopygbhat/anaconda3/include/qt -I/home/noopygbhat/anaconda3/include/qt/QtWidgets -I/home/noopygbhat/anaconda3/include/qt/QtGui -I/home/noopygbhat/anaconda3/include/qt/QtSerialPort -I/home/noopygbhat/anaconda3/include/qt/QtCore -I. -I. -I/home/noopygbhat/anaconda3/mkspecs/linux-g++
 QMAKE         = /home/noopygbhat/anaconda3/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = motor_sensor_gui1.0.0
 DISTDIR = /home/noopygbhat/CMU/S21/578/motor_sensor_lab/motor_sensor_gui/build-motor_sensor_gui-Desktop-Debug/.tmp/motor_sensor_gui1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/noopygbhat/anaconda3/lib
-LIBS          = $(SUBLIBS) -L/home/noopygbhat/anaconda3/lib -lQt5Widgets -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/noopygbhat/anaconda3/lib -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -213,6 +213,7 @@ DIST          = /home/noopygbhat/anaconda3/mkspecs/features/spec_pre.prf \
 		/home/noopygbhat/anaconda3/mkspecs/features/qt_config.prf \
 		/home/noopygbhat/anaconda3/mkspecs/linux-g++/qmake.conf \
 		/home/noopygbhat/anaconda3/mkspecs/features/spec_post.prf \
+		../motor_sensor_gui/.qmake.stash \
 		/home/noopygbhat/anaconda3/mkspecs/features/exclusive_builds.prf \
 		/home/noopygbhat/anaconda3/mkspecs/features/toolchain.prf \
 		/home/noopygbhat/anaconda3/mkspecs/features/default_pre.prf \
@@ -403,6 +404,7 @@ Makefile: ../motor_sensor_gui/motor_sensor_gui.pro /home/noopygbhat/anaconda3/mk
 		/home/noopygbhat/anaconda3/mkspecs/features/qt_config.prf \
 		/home/noopygbhat/anaconda3/mkspecs/linux-g++/qmake.conf \
 		/home/noopygbhat/anaconda3/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/home/noopygbhat/anaconda3/mkspecs/features/exclusive_builds.prf \
 		/home/noopygbhat/anaconda3/mkspecs/features/toolchain.prf \
 		/home/noopygbhat/anaconda3/mkspecs/features/default_pre.prf \
@@ -425,7 +427,7 @@ Makefile: ../motor_sensor_gui/motor_sensor_gui.pro /home/noopygbhat/anaconda3/mk
 		../motor_sensor_gui/motor_sensor_gui.pro \
 		/home/noopygbhat/anaconda3/lib/libQt5Widgets.prl \
 		/home/noopygbhat/anaconda3/lib/libQt5Gui.prl \
-		/home/noopygbhat/anaconda3/lib/libQt5Network.prl \
+		/home/noopygbhat/anaconda3/lib/libQt5SerialPort.prl \
 		/home/noopygbhat/anaconda3/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile ../motor_sensor_gui/motor_sensor_gui.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 /home/noopygbhat/anaconda3/mkspecs/features/spec_pre.prf:
@@ -586,6 +588,7 @@ Makefile: ../motor_sensor_gui/motor_sensor_gui.pro /home/noopygbhat/anaconda3/mk
 /home/noopygbhat/anaconda3/mkspecs/features/qt_config.prf:
 /home/noopygbhat/anaconda3/mkspecs/linux-g++/qmake.conf:
 /home/noopygbhat/anaconda3/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /home/noopygbhat/anaconda3/mkspecs/features/exclusive_builds.prf:
 /home/noopygbhat/anaconda3/mkspecs/features/toolchain.prf:
 /home/noopygbhat/anaconda3/mkspecs/features/default_pre.prf:
@@ -608,7 +611,7 @@ Makefile: ../motor_sensor_gui/motor_sensor_gui.pro /home/noopygbhat/anaconda3/mk
 ../motor_sensor_gui/motor_sensor_gui.pro:
 /home/noopygbhat/anaconda3/lib/libQt5Widgets.prl:
 /home/noopygbhat/anaconda3/lib/libQt5Gui.prl:
-/home/noopygbhat/anaconda3/lib/libQt5Network.prl:
+/home/noopygbhat/anaconda3/lib/libQt5SerialPort.prl:
 /home/noopygbhat/anaconda3/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../motor_sensor_gui/motor_sensor_gui.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -765,15 +768,13 @@ moc_mainwindow.cpp: /home/noopygbhat/anaconda3/include/qt/QtWidgets/QMainWindow 
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qtouchdevice.h \
 		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qtabwidget.h \
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qicon.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/QTcpSocket \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtcpsocket.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetworkglobal.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetwork-config.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/QSerialPort \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialport.h \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialportglobal.h \
 		../motor_sensor_gui/mainwindow.h \
 		moc_predefs.h \
 		/home/noopygbhat/anaconda3/bin/moc
-	/home/noopygbhat/anaconda3/bin/moc $(DEFINES) --include ./moc_predefs.h -I/home/noopygbhat/anaconda3/mkspecs/linux-g++ -I/home/noopygbhat/CMU/S21/578/motor_sensor_lab/motor_sensor_gui/motor_sensor_gui -I/home/noopygbhat/anaconda3/include/qt -I/home/noopygbhat/anaconda3/include/qt/QtWidgets -I/home/noopygbhat/anaconda3/include/qt/QtGui -I/home/noopygbhat/anaconda3/include/qt/QtNetwork -I/home/noopygbhat/anaconda3/include/qt/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../motor_sensor_gui/mainwindow.h -o moc_mainwindow.cpp
+	/home/noopygbhat/anaconda3/bin/moc $(DEFINES) --include ./moc_predefs.h -I/home/noopygbhat/anaconda3/mkspecs/linux-g++ -I/home/noopygbhat/CMU/S21/578/motor_sensor_lab/motor_sensor_gui/motor_sensor_gui -I/home/noopygbhat/anaconda3/include/qt -I/home/noopygbhat/anaconda3/include/qt/QtWidgets -I/home/noopygbhat/anaconda3/include/qt/QtGui -I/home/noopygbhat/anaconda3/include/qt/QtSerialPort -I/home/noopygbhat/anaconda3/include/qt/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../motor_sensor_gui/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -898,11 +899,9 @@ main.o: ../motor_sensor_gui/main.cpp ../motor_sensor_gui/mainwindow.h \
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qtouchdevice.h \
 		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qtabwidget.h \
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qicon.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/QTcpSocket \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtcpsocket.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetworkglobal.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetwork-config.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/QSerialPort \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialport.h \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialportglobal.h \
 		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QApplication \
 		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qapplication.h \
 		/home/noopygbhat/anaconda3/include/qt/QtCore/qcoreapplication.h \
@@ -1016,12 +1015,62 @@ mainwindow.o: ../motor_sensor_gui/mainwindow.cpp ../motor_sensor_gui/mainwindow.
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qtouchdevice.h \
 		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qtabwidget.h \
 		/home/noopygbhat/anaconda3/include/qt/QtGui/qicon.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/QTcpSocket \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtcpsocket.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetworkglobal.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qtnetwork-config.h \
-		/home/noopygbhat/anaconda3/include/qt/QtNetwork/qabstractsocket.h \
-		ui_mainwindow.h
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/QSerialPort \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialport.h \
+		/home/noopygbhat/anaconda3/include/qt/QtSerialPort/qserialportglobal.h \
+		ui_mainwindow.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/QVariant \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QAction \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qaction.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qactiongroup.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QApplication \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qapplication.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/qcoreapplication.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/qeventloop.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qdesktopwidget.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qguiapplication.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qinputmethod.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QButtonGroup \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qbuttongroup.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QHBoxLayout \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qboxlayout.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qlayout.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qlayoutitem.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qgridlayout.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QHeaderView \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qheaderview.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qabstractitemview.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qabstractscrollarea.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qframe.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/qabstractitemmodel.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/qitemselectionmodel.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qabstractitemdelegate.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qstyleoption.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qabstractspinbox.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qvalidator.h \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/qregularexpression.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qslider.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qabstractslider.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qstyle.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qtabbar.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qrubberband.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QLabel \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qlabel.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QMenu \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qmenu.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QMenuBar \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qmenubar.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QStatusBar \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qstatusbar.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QTextEdit \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/qtextedit.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qtextdocument.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qtextoption.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qtextcursor.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qtextformat.h \
+		/home/noopygbhat/anaconda3/include/qt/QtGui/qpen.h \
+		/home/noopygbhat/anaconda3/include/qt/QtWidgets/QWidget \
+		/home/noopygbhat/anaconda3/include/qt/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../motor_sensor_gui/mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTcpSocket>
+#include <QSerialPort>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,13 +18,13 @@ public:
     ~MainWindow();
 
 public slots:
-    void connected();
-    void disconnected();
-    void bytesWritten(qint64 bytes);
     void readyRead();
+    void timerDown();
 
 private:
     Ui::MainWindow *ui;
-    QTcpSocket *socket = nullptr;
+    QSerialPort serial;
+    QByteArray serialBuf;
+    QTimer *timer;
 };
 #endif // MAINWINDOW_H
