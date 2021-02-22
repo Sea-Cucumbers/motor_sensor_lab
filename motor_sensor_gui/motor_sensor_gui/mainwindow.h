@@ -21,10 +21,29 @@ public slots:
     void readyRead();
     void timerDown();
 
+private slots:
+    void on_servoComboBox_currentIndexChanged(int index);
+
+    void on_servoPushButton_clicked();
+
+    void on_dcComboBox_currentIndexChanged(int index);
+
+    void on_dcPushButton_clicked();
+
+    void on_stepperComboBox_currentIndexChanged(int index);
+
+    void on_stepperPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort serial;
     QByteArray serialBuf;
     QTimer *timer;
+
+    int servoControlMethod;
+    int dcControlMethod;
+    int stepperControlMethod;
+
+    void serialWrite(QString &str);
 };
 #endif // MAINWINDOW_H

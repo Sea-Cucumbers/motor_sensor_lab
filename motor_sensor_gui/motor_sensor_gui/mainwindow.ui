@@ -7,34 +7,339 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QLabel" name="infraredLabel">
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>70</y>
-      <width>494</width>
-      <height>41</height>
+      <y>60</y>
+      <width>216</width>
+      <height>17</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Ultrasonic Distance Measurement</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="ultrasonicTextEdit"/>
-     </item>
-    </layout>
+    <property name="text">
+     <string>Infrared Distance Measurement</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="infraredTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>50</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="potentiometerLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>100</y>
+      <width>144</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Potentiometer Angle</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="potentiometerTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>90</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="servoAngleLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>190</y>
+      <width>211</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Desired Servo Angle (deg)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="servoSpeedLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>230</y>
+      <width>201</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Desired Servo Speed (deg/s)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="servoSpeedLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>220</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dcVelocityLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>380</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dcAngleLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>350</y>
+      <width>221</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Desired DC Motor Angle (deg)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dcVelocityLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>390</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Desired DC Motor Velocity (deg/s)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dcAngleLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>340</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="servoAngleLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>180</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="dcComboBox">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>300</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>GUI Angle Control</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>GUI Velocity Control</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sensor Control</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="servoPushButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>260</y>
+      <width>121</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Command Servo</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="servoComboBox">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>140</y>
+      <width>121</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>GUI Control</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sensor Control</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="dcPushButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>420</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Command DC Motor</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="servoMethodLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>150</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Servo Control Method</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dcMethodLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>300</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DC Motor Control Method</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="stepperComboBox">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>460</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>GUI Control</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sensor Control</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="stepperMethodLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>460</y>
+      <width>181</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stepper Control Method</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="stepperDisplacementLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>500</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="stepperDisplacementLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>510</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Desired Stepper Displacement (deg)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="stepperPushButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>540</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Command Stepper</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ultrasonicLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>20</y>
+      <width>230</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ultrasonic Distance Measurement</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="ultrasonicTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>377</x>
+      <y>9</y>
+      <width>256</width>
+      <height>31</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
