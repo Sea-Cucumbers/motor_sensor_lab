@@ -2,12 +2,12 @@
 #include <DHT.h>
 
 #define ULTRASONIC_TRIG_PIN 13
-#define ULTRASONIC_ECHO_PIN 12
+#define ULTRASONIC_ECHO_PIN 22
 #define IR_PIN              A0
 #define POT_PIN             A1
 #define IR_WINDOW_SIZE      4
-#define DHT_PIN           7
-#define DHT_TYPE             11
+#define DHT_PIN             2
+#define DHT_TYPE            11
 
 int ir_val;          // raw value from ir sensor
 int ir_val_avg;      // low-passed raw ir value 
