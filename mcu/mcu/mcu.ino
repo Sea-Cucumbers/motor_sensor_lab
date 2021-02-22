@@ -12,14 +12,16 @@
 #define MS3 1
 #define FULL_STEP 1
 
-#define ultrasonicTrigPin 13
-#define ultrasonicEchoPin 12
-#define servoPin          9
+#define servoPin          11
 #define ROT_CLK           8
 #define ROT_DT            7
+#define SW_PIN            10
 #define IR_pin            A0
 
 #define IR_WINDOW_SIZE    4
+
+#define USER_CTR 1
+#define SENSOR_CTR 0
 
 int rot_curr;
 int rot_prev;
@@ -32,6 +34,13 @@ int rot_dt;
 
 int ir_window[IR_WINDOW_SIZE];
 unsigned int ir_curr_entry = 0;
+
+// variables to store system state
+// is switch pressed once, toggle state
+int counter_sw = 0;
+int sw_val;
+bool system_state = SENSOR_CTR;
+bool pressed = 0;
 
 Servo sg90;
 int servoPos = 0;
@@ -82,6 +91,7 @@ void setup() {
   pinMode(ultrasonicEchoPin, INPUT);
   pinMode(ROT_CLK, INPUT);
   pinMode(ROT_DT, INPUT);
+  pinMode(SW_PIN, INPUT);
   pinMode(IR_pin, INPUT);
   rot_prev = digitalRead(ROT_CLK);
   sg90.attach(servoPin);
@@ -110,7 +120,34 @@ void loop() {
   */
   rot_curr = digitalRead(ROT_CLK);
   rot_dt = digitalRead(ROT_DT);
-
+  sw_val = digitalRead(SW_PIN);
+  
+  // software debouncer
+  if (pressed == 0){
+    if (sw_val == 1){
+      counter_sw += 1;
+    } else {
+      if (counter_sw > 0)
+        counter_sw -= 1;
+    }
+    if (counter_sw > 3){
+      pressed = 1;
+      counter_sw = 0;
+    }
+  } else { // pressed = 1
+    if (sw_val == 0){
+      counter_sw += 1;
+    } else {
+      if (counter_sw > 0)
+        counter_sw -= 1;
+    }
+    if (counter_sw > 3){
+      pressed = 0;
+      counter_sw = 0;
+      system_state = !system_state;
+    }
+  }
+  
   if (rot_curr != rot_prev){
     if (rot_dt != rot_curr) { 
       //moved CCW
@@ -145,7 +182,11 @@ void loop() {
   Serial.print('\t');
   Serial.print(servoPos);
   Serial.print('\t');
-  Serial.println(ir_cm);
+  Serial.print(ir_cm);
+  Serial.print('\t');
+  Serial.print(pressed);
+  Serial.print('\t');
+  Serial.println(system_state);
   sg90.write(servoPos);
 
   if (ir_cm > 7 && ir_cm < 30){
