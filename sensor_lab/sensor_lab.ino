@@ -1,9 +1,7 @@
 #include <dht.h>
 
-#define ULTRASONIC_TRIG_PIN 13
-#define ULTRASONIC_ECHO_PIN 22
-#define IR_PIN              A0
-#define POT_PIN             A1
+#define IR_PIN              A3
+#define POT_PIN             A2
 #define IR_WINDOW_SIZE      4
 #define DHT_PIN             2
 #define DHT_TYPE            11
@@ -42,28 +40,14 @@ int calculate_ir_val_avg(int val){
 void setup() {
   init_ir_window();
   Serial.begin (9600);
-  pinMode(ULTRASONIC_TRIG_PIN, OUTPUT);
-  pinMode(ULTRASONIC_ECHO_PIN, INPUT);
+  //pinMode(ULTRASONIC_TRIG_PIN, OUTPUT);
+  //pinMode(ULTRASONIC_ECHO_PIN, INPUT);
   pinMode(IR_PIN, INPUT);
 }
 
 void loop() {
   // Potentiometer code
   int pot_degrees = map(analogRead(POT_PIN), 0, 1023, 0, 225);
-  
-  // Ultrasonic code
-  digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(ULTRASONIC_TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
-
-  // Get received pulse width in microseconds
-  int us_duration = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);
-  int us_cm = (us_duration/2) / 29.1;
-  if (us_cm >= 200 || us_cm < 0){
-    us_cm = -1;
-  }
 
   // IR code
   ir_val = analogRead(IR_PIN);
@@ -82,10 +66,10 @@ void loop() {
 
   Serial.print("Potentiometer: ");
   Serial.print(pot_degrees);
-  Serial.print("\t Ultrasound: ");
-  Serial.print(us_cm);
+ 
   Serial.print("\t Infrared: ");
   Serial.print(ir_cm);
+  
   Serial.print("\t Temperature (C): ");
   Serial.print(temp_c);
   Serial.print("\t Humidity: ");
