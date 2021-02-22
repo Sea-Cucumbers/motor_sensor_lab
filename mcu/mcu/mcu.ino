@@ -87,8 +87,6 @@ long command_deg(float deg){
 void setup() {
   init_ir_window();
   Serial.begin (9600);
-  pinMode(ultrasonicTrigPin, OUTPUT);
-  pinMode(ultrasonicEchoPin, INPUT);
   pinMode(ROT_CLK, INPUT);
   pinMode(ROT_DT, INPUT);
   pinMode(SW_PIN, INPUT);
