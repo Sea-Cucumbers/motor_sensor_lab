@@ -19,19 +19,46 @@
 #define ROT_DT            7
 #define IR_pin            A0
 
+#define IR_WINDOW_SIZE    4
+
 int rot_curr;
 int rot_prev;
 int counter = 0;
-int ir_val;
-double ir_cm = 0;
+int ir_val;          // raw value from ir sensor
+int ir_val_avg;      // low-passed raw ir value 
+double ir_cm = 0;    // low-passed raw ir value converted to cm
 double ir_cm_prev = 0;
 int rot_dt;
+
+int ir_window[IR_WINDOW_SIZE];
+unsigned int ir_curr_entry = 0;
 
 Servo sg90;
 int servoPos = 0;
 
 A4988 stepper(MOTOR_STEPS, DIR, STEP, MS1, MS2, MS3);
 int stepper_run = 1;
+
+void init_ir_window(){
+  for (int i = 0; i < IR_WINDOW_SIZE; i++){
+    ir_window[i] = 0;
+  }
+}
+
+void increment_ir_entry(){
+  ir_curr_entry += 1;
+  if (ir_curr_entry >= 4)
+    ir_curr_entry -= 4;
+}
+
+int calculate_ir_val_avg(int val){
+  ir_window[ir_curr_entry] = ir_val;
+  increment_ir_entry();
+  int sum = 0;
+  for (int i = 0; i < IR_WINDOW_SIZE; i++)
+    sum += ir_window[i];
+  return sum/4;
+}
 
 float command_rpm(float rpm){
   if (rpm < 0)
@@ -49,6 +76,7 @@ long command_deg(float deg){
 
 
 void setup() {
+  init_ir_window();
   Serial.begin (9600);
   pinMode(ultrasonicTrigPin, OUTPUT);
   pinMode(ultrasonicEchoPin, INPUT);
@@ -101,12 +129,13 @@ void loop() {
   } 
   rot_prev = rot_curr;
   ir_val = analogRead(IR_pin);
+  ir_val_avg = calculate_ir_val_avg(ir_val);
   ir_cm = (1.2381098271285667e+002
-     -  1.0116656095344860e+000 * pow(ir_val,1)
-     +  3.8880974300887472e-003 * pow(ir_val,2)
-     -  7.6736080602734829e-006 * pow(ir_val,3)
-     +  7.5096434225708319e-009 * pow(ir_val,4)
-     -  2.8890824514025209e-012 * pow(ir_val,5));
+     -  1.0116656095344860e+000 * pow(ir_val_avg,1)
+     +  3.8880974300887472e-003 * pow(ir_val_avg,2)
+     -  7.6736080602734829e-006 * pow(ir_val_avg,3)
+     +  7.5096434225708319e-009 * pow(ir_val_avg,4)
+     -  2.8890824514025209e-012 * pow(ir_val_avg,5));
   
   Serial.print(rot_curr);
   Serial.print('\t');
@@ -122,10 +151,10 @@ void loop() {
   if (ir_cm > 7 && ir_cm < 30){
     //stepper_tot = (int)ir_cm - 7;
     if (ir_cm - ir_cm_prev > 0.5){
-      stepper.rotate(command_deg(3));
+      stepper.rotate(command_deg(7));
     }
     else if (ir_cm - ir_cm_prev < -0.5){
-      stepper.rotate(command_deg(-3));
+      stepper.rotate(command_deg(-7));
     }
   }
   ir_cm_prev = ir_cm;
