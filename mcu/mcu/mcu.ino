@@ -115,6 +115,32 @@ int char_to_int(char c) {
   }
 }
 
+int parse_int(char *buf, int len) {
+  bool neg = buf[0] == '-';
+  if (len >= 4) {
+    // Assume negative 3-digit
+    return -(100*char_to_int(buf[1]) + 10*char_to_int(buf[2]) + char_to_int(buf[3]));
+  } else if (len >= 3) {
+    if (neg) {
+      // Negative 2-digit
+      return -(10*char_to_int(buf[1]) + char_to_int(buf[2]));
+    } else {
+      // Positive 3-digit
+      return 100*char_to_int(buf[0]) + 10*char_to_int(buf[1]) + char_to_int(buf[2]);
+    }
+  } else if (len >= 2) {
+    if (neg) {
+      // Negative one-digit
+      return -char_to_int(buf[1]);
+    } else {
+      // Positive 2-digit
+      return 10*char_to_int(buf[0]) + char_to_int(buf[1]);
+    }
+  } else if (len >= 1) {
+    // Positive one-digit
+    return char_to_int(buf[0]);
+  }
+}
 
 void setup() {
   init_ir_window();
@@ -142,11 +168,19 @@ void loop() {
      +  7.5096434225708319e-009 * pow(ir_val_avg,4)
      -  2.8890824514025209e-012 * pow(ir_val_avg,5));
 
-  Serial.print("pot ");
+  Serial.print("po");
   Serial.print(pot_degrees);
   Serial.print("\n");
-  Serial.print("ir ");
+  Serial.print("ir");
   Serial.print(ir_cm);
+  Serial.print("\n");
+
+  // Tell the GUI the control mode
+  if (system_state == USER_CTR) {
+    Serial.print("mdg");
+  } else {
+    Serial.print("mds");
+  }
   Serial.print("\n");
   
   rot_curr = digitalRead(ROT_CLK);
@@ -178,17 +212,21 @@ void loop() {
       system_state = !system_state;
 
       // Tell GUI that the control mode changed
+      /*
       if (system_state == USER_CTR) {
-        Serial.print("md g");
+        Serial.print("mdg");
         Serial.print("\n");
       } else {
-        Serial.print("md s");
+        Serial.print("mds");
         Serial.print("\n");
       }
+      */
     }
   }
 
   if (system_state == SENSOR_CTR) {
+    servoPos = map(pot_degrees, 0, 255, 0, 180);
+    /*
     if (rot_curr != rot_prev){
       if (rot_dt != rot_curr) { 
         //moved CCW
@@ -205,6 +243,7 @@ void loop() {
             servoPos -= 30;
       }
     }
+    */
 
     if (ir_cm > 7 && ir_cm < 30){
       //stepper_tot = (int)ir_cm - 7;
@@ -249,51 +288,20 @@ void loop() {
       if (serialBuf[serialConsumerIdx] + 128 == 's' &&
           serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
         // Servo message
-        servoPos = 0;
-        if (newlineIdx >= serialConsumerIdx + 6) { // 3-digit number
-          servoPos = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
-        }
-        else if (newlineIdx >= serialConsumerIdx + 5) { // 2-digit number
-          servoPos = 10*char_to_int(serialBuf[serialConsumerIdx + 3]) + char_to_int(serialBuf[serialConsumerIdx + 4]);
-        }
-        else if (newlineIdx >= serialConsumerIdx + 4) { // 1-digit number
-          servoPos = char_to_int(serialBuf[serialConsumerIdx + 3]);
-        }
+        servoPos = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
       } else if (serialBuf[serialConsumerIdx] + 128 == 's' &&
                  serialBuf[serialConsumerIdx + 1] == 't') {
         // Stepper message
-        int deg = 0;
-        bool neg = serialBuf[serialConsumerIdx + 3] == '-';
-        if (newlineIdx >= serialConsumerIdx + 7) {
-          // Assume negative 3-digit
-          deg = -(100*char_to_int(serialBuf[serialConsumerIdx + 4]) + 10*char_to_int(serialBuf[serialConsumerIdx + 5]) + char_to_int(serialBuf[serialConsumerIdx + 6]));
-        } else if (newlineIdx >= serialConsumerIdx + 6) {
-          if (neg) {
-            // Negative 2-digit
-            deg = -(10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]));
-          } else {
-            // Positive 3-digit
-            deg = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
-          }
-        } else if (newlineIdx >= serialConsumerIdx + 5) {
-          if (neg) {
-            // Negative one-digit
-            deg = -char_to_int(serialBuf[serialConsumerIdx + 4]);
-          } else {
-            // Positive 2-digit
-            deg = 10*char_to_int(serialBuf[serialConsumerIdx + 3]) + char_to_int(serialBuf[serialConsumerIdx + 4]);
-          }
-        } else if (newlineIdx >= serialConsumerIdx + 4) {
-          // Positive one-digit
-          deg = char_to_int(serialBuf[serialConsumerIdx + 3]);
-        }
+        int deg = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
         stepper.rotate(command_deg(deg));
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'a') {
         // DC angle message
+        int dcPos = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
         // DC velocity message
+        int vel = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
       }
       serialConsumerIdx = newlineIdx + 1;
     }
