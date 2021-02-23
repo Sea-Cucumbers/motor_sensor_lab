@@ -90,6 +90,32 @@ long command_deg(float deg){
 }
 
 
+int char_to_int(char c) {
+  switch (c) {
+    case '0':
+      return c - 48;
+    case -79:
+      return c + 80;
+    case -78:
+      return c + 80;
+    case '3':
+      return c - 48;
+    case -76:
+      return c + 80;
+    case '5':
+      return c - 48;
+    case '6':
+      return c - 48;
+    case -73:
+      return c + 80;
+    case -72:
+      return c + 80;
+    case '9':
+      return c - 48;
+  }
+}
+
+
 void setup() {
   init_ir_window();
   Serial.begin (9600);
@@ -118,14 +144,12 @@ void loop() {
 
   ir_cm_prev = ir_cm;
 
-  /*
   Serial.print("pot ");
   Serial.print(pot_degrees);
   Serial.print("\n");
   Serial.print("ir ");
   Serial.print(ir_cm);
   Serial.print("\n");
-  */
   
   rot_curr = digitalRead(ROT_CLK);
   rot_dt = digitalRead(ROT_DT);
@@ -217,24 +241,16 @@ void loop() {
     if (fullMessage) {
       if (serialBuf[serialConsumerIdx] + 128 == 's' &&
           serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
-        char pos[4];
-        pos[0] = serialBuf[serialConsumerIdx + 3];
-        if (newlineIdx >= serialConsumerIdx + 4) {
-          pos[1] = 0;
+        servoPos = 0;
+        if (newlineIdx >= serialConsumerIdx + 6) { // 3-digit number
+          servoPos = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
         }
-        if (newlineIdx >= serialConsumerIdx + 5) {
-          pos[1] = serialBuf[serialConsumerIdx + 4];
-          pos[2] = 0;
+        else if (newlineIdx >= serialConsumerIdx + 5) { // 2-digit number
+          servoPos = 10*char_to_int(serialBuf[serialConsumerIdx + 3]) + char_to_int(serialBuf[serialConsumerIdx + 4]);
         }
-        if (newlineIdx >= serialConsumerIdx + 6) {
-          pos[2] = serialBuf[serialConsumerIdx + 4];
-          pos[3] = 0;
+        else if (newlineIdx >= serialConsumerIdx + 4) { // 1-digit number
+          servoPos = char_to_int(serialBuf[serialConsumerIdx + 3]);
         }
-
-        String pos_str(pos);
-        servoPos = atoi(pos);//pos_str.toInt();
-        Serial.println(pos);
-        Serial.println(servoPos);
       } else if (serialBuf[serialConsumerIdx] + 128 == 's' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 't') {
         // Stepper message

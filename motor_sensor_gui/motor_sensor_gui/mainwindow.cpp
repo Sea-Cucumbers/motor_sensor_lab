@@ -49,23 +49,23 @@ void MainWindow::readyRead()
 void MainWindow::timerDown()
 {
     int newlineIdx = serialBuf.indexOf('\n');
-    if (newlineIdx < 0) {
-        return;
-    }
+    while (newlineIdx >= 0) {
+        QByteArray show = serialBuf.left(newlineIdx);
+        if (show.indexOf("us") >= 0) {
+            ui->ultrasonicTextEdit->setPlainText(show);
+        } else if (show.indexOf("ir") >= 0) {
+            ui->infraredTextEdit->setPlainText(show);
+            qDebug() << show << endl;
+        } else if (show.indexOf("pot") >= 0) {
+            ui->potentiometerTextEdit->setPlainText(show);
+        } else {
+            qDebug() << "Unknown message type received from MCU\n";
+            qDebug() << show << endl;
+        }
 
-    QByteArray show = serialBuf.left(newlineIdx);
-    if (show.indexOf("us") >= 0) {
-        ui->ultrasonicTextEdit->setPlainText(show);
-    } else if (show.indexOf("ir") >= 0) {
-        ui->infraredTextEdit->setPlainText(show);
-    } else if (show.indexOf("pot") >= 0) {
-        ui->potentiometerTextEdit->setPlainText(show);
-    } else {
-        qDebug() << "Unknown message type received from MCU\n";
-        qDebug() << show << endl;
+        serialBuf = serialBuf.remove(0, newlineIdx + 1);
+        newlineIdx = serialBuf.indexOf('\n');
     }
-
-    serialBuf = serialBuf.remove(0, newlineIdx + 1);
 }
 
 MainWindow::~MainWindow()
