@@ -27,8 +27,6 @@ void setup() {
 
 void loop(){ 
   digitalWrite(brakePin, LOW);   //Disengage the Brake for Channel A
-  //digitalWrite(directionPin, HIGH); //Establishes forward direction of Channel A
-  analogWrite(motorSpeedPin,255); 
 
   //if user tries to input angle
   
