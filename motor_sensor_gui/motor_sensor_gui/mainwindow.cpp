@@ -55,18 +55,18 @@ void MainWindow::timerDown()
     while (newlineIdx >= 0) {
         QByteArray show = serialBuf.left(newlineIdx);
         if (show.indexOf("us") >= 0) {
-            show.remove(0, 3);
+            show.remove(0, 2);
             ui->ultrasonicTextEdit->setPlainText(show);
         } else if (show.indexOf("ir") >= 0) {
-            show.remove(0, 3);
+            show.remove(0, 2);
             ui->infraredTextEdit->setPlainText(show);
-        } else if (show.indexOf("pot") >= 0) {
-            show.remove(0, 4);
+        } else if (show.indexOf("po") >= 0) {
+            show.remove(0, 2);
             ui->potentiometerTextEdit->setPlainText(show);
-        } else if (show.indexOf("md ") >= 0) {
-            if (show[3] == 'g') {
+        } else if (show.indexOf("md") >= 0) {
+            if (show[2] == 'g') {
                 ui->controlModeTextEdit->setPlainText("GUI");
-            } else if (show[3] == 's') {
+            } else if (show[2] == 's') {
                 ui->controlModeTextEdit->setPlainText("Sensor");
             } else {
                 ui->controlModeTextEdit->setPlainText("Unknown control mode");
@@ -102,27 +102,27 @@ void MainWindow::serialWrite(QString &str) {
 void MainWindow::on_servoPushButton_clicked()
 {
     qDebug() << "Wrote servo position" << endl;
-    QString str = "sv " + ui->servoAngleLineEdit->text() + "\n";
+    QString str = "sv" + ui->servoAngleLineEdit->text() + "\n";
     serialWrite(str);
 }
 
 void MainWindow::on_dcAnglePushButton_clicked()
 {
     qDebug() << "Wrote DC motor position" << endl;
-    QString str = "da " + ui->dcAngleLineEdit->text() + "\n";
+    QString str = "da" + ui->dcAngleLineEdit->text() + "\n";
     serialWrite(str);
 }
 
 void MainWindow::on_dcVelocityPushButton_clicked()
 {
     qDebug() << "Wrote DC motor velocity" << endl;
-    QString str = "dv " + ui->dcVelocityLineEdit->text() + "\n";
+    QString str = "dv" + ui->dcVelocityLineEdit->text() + "\n";
     serialWrite(str);
 }
 
 void MainWindow::on_stepperPushButton_clicked()
 {
     qDebug() << "Wrote stepper displacement" << endl;
-    QString str = "st " + ui->stepperDisplacementLineEdit->text() + "\n";
+    QString str = "st" + ui->stepperDisplacementLineEdit->text() + "\n";
     serialWrite(str);
 }
