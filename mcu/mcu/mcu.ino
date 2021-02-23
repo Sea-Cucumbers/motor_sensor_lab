@@ -1,7 +1,6 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include "A4988.h"
-
 // using a 200-step motor (most common)
 #define MOTOR_STEPS 200
 // configure the pins connected
@@ -16,12 +15,15 @@
 #define ROT_CLK           8
 #define ROT_DT            7
 #define SW_PIN            10
-#define IR_pin            A0
 
-#define IR_WINDOW_SIZE    4
+#define IR_PIN              A3
+#define POT_PIN             A2
+#define IR_WINDOW_SIZE      4
 
 #define USER_CTR 1
 #define SENSOR_CTR 0
+
+#define SERIAL_BUF_LEN 100
 
 int rot_curr;
 int rot_prev;
@@ -47,6 +49,10 @@ int servoPos = 0;
 
 A4988 stepper(MOTOR_STEPS, DIR, STEP, MS1, MS2, MS3);
 int stepper_run = 1;
+
+char serialBuf[SERIAL_BUF_LEN];
+int serialProducerIdx = 0;
+int serialConsumerIdx = 0;
 
 void init_ir_window(){
   for (int i = 0; i < IR_WINDOW_SIZE; i++){
@@ -84,40 +90,67 @@ long command_deg(float deg){
 }
 
 
+int char_to_int(char c) {
+  switch (c) {
+    case '0':
+      return c - 48;
+    case -79:
+      return c + 80;
+    case -78:
+      return c + 80;
+    case '3':
+      return c - 48;
+    case -76:
+      return c + 80;
+    case '5':
+      return c - 48;
+    case '6':
+      return c - 48;
+    case -73:
+      return c + 80;
+    case -72:
+      return c + 80;
+    case '9':
+      return c - 48;
+  }
+}
+
+
 void setup() {
   init_ir_window();
   Serial.begin (9600);
-  pinMode(ultrasonicTrigPin, OUTPUT);
-  pinMode(ultrasonicEchoPin, INPUT);
   pinMode(ROT_CLK, INPUT);
   pinMode(ROT_DT, INPUT);
   pinMode(SW_PIN, INPUT);
-  pinMode(IR_pin, INPUT);
+  pinMode(IR_PIN, INPUT);
   rot_prev = digitalRead(ROT_CLK);
   sg90.attach(servoPin);
   stepper.begin(command_rpm(5), FULL_STEP);
 }
 
 void loop() {
-  /*
-  long duration, distance;
-  digitalWrite(ultrasonicTrigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(ultrasonicTrigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(ultrasonicTrigPin, LOW);
+  // Potentiometer code
+  int pot_degrees = map(analogRead(POT_PIN), 0, 1023, 0, 225);
+  
+  // IR code
+  ir_val = analogRead(IR_PIN);
+  ir_val_avg = calculate_ir_val_avg(ir_val);
+  ir_cm = (1.2381098271285667e+002
+     -  1.0116656095344860e+000 * pow(ir_val_avg,1)
+     +  3.8880974300887472e-003 * pow(ir_val_avg,2)
+     -  7.6736080602734829e-006 * pow(ir_val_avg,3)
+     +  7.5096434225708319e-009 * pow(ir_val_avg,4)
+     -  2.8890824514025209e-012 * pow(ir_val_avg,5));
 
-  // Get received pulse width in microseconds
-  duration = pulseIn(ultrasonicEchoPin, HIGH);
-  distance = (duration/2) / 29.1;
-  if (distance >= 200 || distance <= 0){
-    Serial.println("us 0");
-  }
-  else {
-    Serial.print("us ");
-    Serial.println(distance);
-  }
-  */
+  ir_cm_prev = ir_cm;
+
+  Serial.print("pot ");
+  Serial.print(pot_degrees);
+  Serial.print("\n");
+  Serial.print("ir ");
+  Serial.print(ir_cm);
+  Serial.print("\n");
+  
   rot_curr = digitalRead(ROT_CLK);
   rot_dt = digitalRead(ROT_DT);
   sw_val = digitalRead(SW_PIN);
@@ -147,57 +180,93 @@ void loop() {
       system_state = !system_state;
     }
   }
-  
-  if (rot_curr != rot_prev){
-    if (rot_dt != rot_curr) { 
-      //moved CCW
-      if (rot_curr == 0 && rot_dt == 1)
-        counter ++;
-        if (servoPos < 160)
-          servoPos += 30;
-    } 
-    else {
-      if (rot_curr == 1 && rot_dt == 1)
-        // moved CW
-        counter --;
-        if (servoPos > 0 )
-          servoPos -= 30;
-    }
-  } 
-  rot_prev = rot_curr;
-  ir_val = analogRead(IR_pin);
-  ir_val_avg = calculate_ir_val_avg(ir_val);
-  ir_cm = (1.2381098271285667e+002
-     -  1.0116656095344860e+000 * pow(ir_val_avg,1)
-     +  3.8880974300887472e-003 * pow(ir_val_avg,2)
-     -  7.6736080602734829e-006 * pow(ir_val_avg,3)
-     +  7.5096434225708319e-009 * pow(ir_val_avg,4)
-     -  2.8890824514025209e-012 * pow(ir_val_avg,5));
-  
-  Serial.print(rot_curr);
-  Serial.print('\t');
-  Serial.print(rot_dt);
-  Serial.print('\t');
-  Serial.print(counter);
-  Serial.print('\t');
-  Serial.print(servoPos);
-  Serial.print('\t');
-  Serial.print(ir_cm);
-  Serial.print('\t');
-  Serial.print(pressed);
-  Serial.print('\t');
-  Serial.println(system_state);
-  sg90.write(servoPos);
 
-  if (ir_cm > 7 && ir_cm < 30){
-    //stepper_tot = (int)ir_cm - 7;
-    if (ir_cm - ir_cm_prev > 0.5){
-      stepper.rotate(command_deg(7));
+  if (system_state == SENSOR_CTR) {
+    if (rot_curr != rot_prev){
+      if (rot_dt != rot_curr) { 
+        //moved CCW
+        if (rot_curr == 0 && rot_dt == 1)
+          counter ++;
+          if (servoPos < 160)
+            servoPos += 30;
+      } 
+      else {
+        if (rot_curr == 1 && rot_dt == 1)
+          // moved CW
+          counter --;
+          if (servoPos > 0 )
+            servoPos -= 30;
+      }
     }
-    else if (ir_cm - ir_cm_prev < -0.5){
-      stepper.rotate(command_deg(-7));
+
+    if (ir_cm > 7 && ir_cm < 30){
+      //stepper_tot = (int)ir_cm - 7;
+      if (ir_cm - ir_cm_prev > 0.5){
+        stepper.rotate(command_deg(7));
+      }
+      else if (ir_cm - ir_cm_prev < -0.5){
+        stepper.rotate(command_deg(-7));
+      }
+    }
+
+    // If we're in sensor control mode, throw out any bytes
+    // coming from the user
+    serialProducerIdx = 0;
+    serialConsumerIdx = 0;
+    while (Serial.available()) {
+      Serial.read();
+    }
+  } else {
+    // Put any commands from the computer into the serial buffer
+    while (Serial.available()) {
+      serialBuf[serialProducerIdx] = Serial.read();
+      ++serialProducerIdx;
+      if (serialProducerIdx >= SERIAL_BUF_LEN) {
+        serialProducerIdx = 0;
+      }
+    }
+
+    // Look for newline between consumer and producer. If there isn't one, we
+    // haven't gotten a full message
+    bool fullMessage = false;
+    int newlineIdx = 0;
+    for (int i = serialConsumerIdx; i < serialProducerIdx; ++i) {
+      if (serialBuf[i] == '\n') {
+        fullMessage = true;
+        newlineIdx = i;
+        break;
+      }
+    }
+
+    if (fullMessage) {
+      if (serialBuf[serialConsumerIdx] + 128 == 's' &&
+          serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
+        servoPos = 0;
+        if (newlineIdx >= serialConsumerIdx + 6) { // 3-digit number
+          servoPos = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
+        }
+        else if (newlineIdx >= serialConsumerIdx + 5) { // 2-digit number
+          servoPos = 10*char_to_int(serialBuf[serialConsumerIdx + 3]) + char_to_int(serialBuf[serialConsumerIdx + 4]);
+        }
+        else if (newlineIdx >= serialConsumerIdx + 4) { // 1-digit number
+          servoPos = char_to_int(serialBuf[serialConsumerIdx + 3]);
+        }
+      } else if (serialBuf[serialConsumerIdx] + 128 == 's' &&
+                 serialBuf[serialConsumerIdx + 1] + 128 == 't') {
+        // Stepper message
+      } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
+                 serialBuf[serialConsumerIdx + 1] + 128 == 'a') {
+        // DC angle message
+      } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
+                 serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
+        // DC velocity message
+      }
+      serialConsumerIdx = newlineIdx + 1;
     }
   }
-  ir_cm_prev = ir_cm;
+
+  
+  rot_prev = rot_curr;
+  sg90.write(servoPos);
   delay(15);
 }

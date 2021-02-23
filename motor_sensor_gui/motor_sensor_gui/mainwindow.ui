@@ -64,7 +64,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>190</y>
+      <y>160</y>
       <width>211</width>
       <height>17</height>
      </rect>
@@ -73,34 +73,11 @@
      <string>Desired Servo Angle (deg)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="servoSpeedLabel">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>230</y>
-      <width>201</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Desired Servo Speed (deg/s)</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="servoSpeedLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>220</y>
-      <width>113</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="dcVelocityLineEdit">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>380</y>
+      <y>320</y>
       <width>113</width>
       <height>25</height>
      </rect>
@@ -110,7 +87,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>350</y>
+      <y>250</y>
       <width>221</width>
       <height>17</height>
      </rect>
@@ -123,7 +100,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>390</y>
+      <y>330</y>
       <width>241</width>
       <height>17</height>
      </rect>
@@ -136,7 +113,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>340</y>
+      <y>240</y>
       <width>113</width>
       <height>25</height>
      </rect>
@@ -146,42 +123,17 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>180</y>
+      <y>150</y>
       <width>113</width>
       <height>25</height>
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="dcComboBox">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>300</y>
-      <width>151</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>GUI Angle Control</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>GUI Velocity Control</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Sensor Control</string>
-     </property>
-    </item>
-   </widget>
    <widget class="QPushButton" name="servoPushButton">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>260</y>
+      <y>190</y>
       <width>121</width>
       <height>25</height>
      </rect>
@@ -190,103 +142,24 @@
      <string>Command Servo</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="servoComboBox">
+   <widget class="QPushButton" name="dcVelocityPushButton">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>140</y>
-      <width>121</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>GUI Control</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Sensor Control</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QPushButton" name="dcPushButton">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>420</y>
-      <width>151</width>
+      <y>360</y>
+      <width>201</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>Command DC Motor</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="servoMethodLabel">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>150</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Servo Control Method</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="dcMethodLabel">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>300</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>DC Motor Control Method</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="stepperComboBox">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>460</y>
-      <width>151</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>GUI Control</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Sensor Control</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLabel" name="stepperMethodLabel">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>460</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Stepper Control Method</string>
+     <string>Command DC Motor Velocity</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="stepperDisplacementLineEdit">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>500</y>
+      <y>410</y>
       <width>113</width>
       <height>25</height>
      </rect>
@@ -296,7 +169,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>510</y>
+      <y>420</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -309,7 +182,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>540</y>
+      <y>450</y>
       <width>151</width>
       <height>25</height>
      </rect>
@@ -339,6 +212,19 @@
       <width>256</width>
       <height>31</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="dcAnglePushButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>280</y>
+      <width>201</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Command DC Motor Angle</string>
     </property>
    </widget>
   </widget>
