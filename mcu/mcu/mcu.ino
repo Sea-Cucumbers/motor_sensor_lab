@@ -175,6 +175,16 @@ void loop() {
       }
     }
 
+    if (ir_cm > 7 && ir_cm < 30){
+      //stepper_tot = (int)ir_cm - 7;
+      if (ir_cm - ir_cm_prev > 0.5){
+        stepper.rotate(command_deg(7));
+      }
+      else if (ir_cm - ir_cm_prev < -0.5){
+        stepper.rotate(command_deg(-7));
+      }
+    }
+
     // If we're in sensor control mode, throw out any bytes
     // coming from the user
     serialProducerIdx = 0;
@@ -222,7 +232,9 @@ void loop() {
         }
 
         String pos_str(pos);
-        servoPos = pos_str.toInt();
+        servoPos = atoi(pos);//pos_str.toInt();
+        Serial.println(pos);
+        Serial.println(servoPos);
       } else if (serialBuf[serialConsumerIdx] + 128 == 's' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 't') {
         // Stepper message
@@ -233,22 +245,12 @@ void loop() {
                  serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
         // DC velocity message
       }
-      serialConsumerIdx = newlineIdx;
+      serialConsumerIdx = newlineIdx + 1;
     }
   }
 
   
   rot_prev = rot_curr;
   sg90.write(servoPos);
-
-  if (ir_cm > 7 && ir_cm < 30){
-    //stepper_tot = (int)ir_cm - 7;
-    if (ir_cm - ir_cm_prev > 0.5){
-      stepper.rotate(command_deg(7));
-    }
-    else if (ir_cm - ir_cm_prev < -0.5){
-      stepper.rotate(command_deg(-7));
-    }
-  }
   delay(15);
 }
