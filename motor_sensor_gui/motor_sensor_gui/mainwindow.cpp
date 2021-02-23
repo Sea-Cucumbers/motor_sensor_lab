@@ -109,20 +109,20 @@ void MainWindow::on_servoPushButton_clicked()
 void MainWindow::on_dcAnglePushButton_clicked()
 {
     qDebug() << "Wrote DC motor position" << endl;
-    QString str = "da " + ui->dcAngleLineEdit->text();
+    QString str = "da " + ui->dcAngleLineEdit->text() + "\n";
     serialWrite(str);
 }
 
 void MainWindow::on_dcVelocityPushButton_clicked()
 {
     qDebug() << "Wrote DC motor velocity" << endl;
-    QString str = "dv " + ui->dcVelocityLineEdit->text();
+    QString str = "dv " + ui->dcVelocityLineEdit->text() + "\n";
     serialWrite(str);
 }
 
 void MainWindow::on_stepperPushButton_clicked()
 {
     qDebug() << "Wrote stepper displacement" << endl;
-    QString str = "st " + ui->stepperDisplacementLineEdit->text();
+    QString str = "st " + ui->stepperDisplacementLineEdit->text() + "\n";
     serialWrite(str);
 }

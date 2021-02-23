@@ -248,6 +248,7 @@ void loop() {
     if (fullMessage) {
       if (serialBuf[serialConsumerIdx] + 128 == 's' &&
           serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
+        // Servo message
         servoPos = 0;
         if (newlineIdx >= serialConsumerIdx + 6) { // 3-digit number
           servoPos = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
@@ -259,8 +260,34 @@ void loop() {
           servoPos = char_to_int(serialBuf[serialConsumerIdx + 3]);
         }
       } else if (serialBuf[serialConsumerIdx] + 128 == 's' &&
-                 serialBuf[serialConsumerIdx + 1] + 128 == 't') {
+                 serialBuf[serialConsumerIdx + 1] == 't') {
         // Stepper message
+        int deg = 0;
+        bool neg = serialBuf[serialConsumerIdx + 3] == '-';
+        if (newlineIdx >= serialConsumerIdx + 7) {
+          // Assume negative 3-digit
+          deg = -(100*char_to_int(serialBuf[serialConsumerIdx + 4]) + 10*char_to_int(serialBuf[serialConsumerIdx + 5]) + char_to_int(serialBuf[serialConsumerIdx + 6]));
+        } else if (newlineIdx >= serialConsumerIdx + 6) {
+          if (neg) {
+            // Negative 2-digit
+            deg = -(10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]));
+          } else {
+            // Positive 3-digit
+            deg = 100*char_to_int(serialBuf[serialConsumerIdx + 3]) + 10*char_to_int(serialBuf[serialConsumerIdx + 4]) + char_to_int(serialBuf[serialConsumerIdx + 5]);
+          }
+        } else if (newlineIdx >= serialConsumerIdx + 5) {
+          if (neg) {
+            // Negative one-digit
+            deg = -char_to_int(serialBuf[serialConsumerIdx + 4]);
+          } else {
+            // Positive 2-digit
+            deg = 10*char_to_int(serialBuf[serialConsumerIdx + 3]) + char_to_int(serialBuf[serialConsumerIdx + 4]);
+          }
+        } else if (newlineIdx >= serialConsumerIdx + 4) {
+          // Positive one-digit
+          deg = char_to_int(serialBuf[serialConsumerIdx + 3]);
+        }
+        stepper.rotate(command_deg(deg));
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'a') {
         // DC angle message
