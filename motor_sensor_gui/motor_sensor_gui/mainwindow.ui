@@ -227,6 +227,29 @@
      <string>Command DC Motor Angle</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="controlModeTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>500</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="controlModeLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>510</y>
+      <width>144</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Control Mode</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

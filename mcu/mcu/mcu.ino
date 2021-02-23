@@ -6,9 +6,9 @@
 // configure the pins connected
 #define DIR 4
 #define STEP 5
-#define MS1 3
-#define MS2 2
-#define MS3 1
+#define MS1 22
+#define MS2 23
+#define MS3 24
 #define FULL_STEP 1
 
 #define servoPin          11
@@ -142,8 +142,6 @@ void loop() {
      +  7.5096434225708319e-009 * pow(ir_val_avg,4)
      -  2.8890824514025209e-012 * pow(ir_val_avg,5));
 
-  ir_cm_prev = ir_cm;
-
   Serial.print("pot ");
   Serial.print(pot_degrees);
   Serial.print("\n");
@@ -178,6 +176,15 @@ void loop() {
       pressed = 0;
       counter_sw = 0;
       system_state = !system_state;
+
+      // Tell GUI that the control mode changed
+      if (system_state == USER_CTR) {
+        Serial.print("md g");
+        Serial.print("\n");
+      } else {
+        Serial.print("md s");
+        Serial.print("\n");
+      }
     }
   }
 
@@ -268,5 +275,7 @@ void loop() {
   
   rot_prev = rot_curr;
   sg90.write(servoPos);
+
+  ir_cm_prev = ir_cm;
   delay(15);
 }

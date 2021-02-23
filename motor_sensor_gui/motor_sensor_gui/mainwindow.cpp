@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::timerDown);
     timer->start(100);
+
+    // Start off in sensor mode
+    ui->controlModeTextEdit->setPlainText("Sensor");
 }
 
 void MainWindow::readyRead()
@@ -52,12 +55,22 @@ void MainWindow::timerDown()
     while (newlineIdx >= 0) {
         QByteArray show = serialBuf.left(newlineIdx);
         if (show.indexOf("us") >= 0) {
+            show.remove(0, 3);
             ui->ultrasonicTextEdit->setPlainText(show);
         } else if (show.indexOf("ir") >= 0) {
+            show.remove(0, 3);
             ui->infraredTextEdit->setPlainText(show);
-            qDebug() << show << endl;
         } else if (show.indexOf("pot") >= 0) {
+            show.remove(0, 4);
             ui->potentiometerTextEdit->setPlainText(show);
+        } else if (show.indexOf("md ") >= 0) {
+            if (show[3] == 'g') {
+                ui->controlModeTextEdit->setPlainText("GUI");
+            } else if (show[3] == 's') {
+                ui->controlModeTextEdit->setPlainText("Sensor");
+            } else {
+                ui->controlModeTextEdit->setPlainText("Unknown control mode");
+            }
         } else {
             qDebug() << "Unknown message type received from MCU\n";
             qDebug() << show << endl;
