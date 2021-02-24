@@ -184,6 +184,7 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite(brakePin, LOW);
   // Potentiometer code
   int pot_degrees = map(analogRead(POT_PIN), 0, 1023, 0, 225);
   
@@ -239,7 +240,8 @@ void loop() {
       pressed = 0;
       counter_sw = 0;
       system_state = !system_state;
-
+      if (system_state == SENSOR_CTR)
+        analogWrite(motorSpeedPin, 0);
       // Tell GUI that the control mode changed
       /*
       if (system_state == USER_CTR) {
@@ -254,12 +256,12 @@ void loop() {
   }
 
   if (system_state == SENSOR_CTR) {
-    servoPos = map(pot_degrees, 0, 255, 0, 180);
-    /*
+    PWM = pot_degrees;
+    // rotary encoder
     if (rot_curr != rot_prev){
       if (rot_dt != rot_curr) { 
         //moved CCW
-        if (rot_curr == 0 && rot_dt == 1)
+        if (rot_curr == 1 && rot_dt == 0)
           counter ++;
           if (servoPos < 160)
             servoPos += 30;
@@ -272,7 +274,7 @@ void loop() {
             servoPos -= 30;
       }
     }
-    */
+    
 
     if (ir_cm > 7 && ir_cm < 30){
       //stepper_tot = (int)ir_cm - 7;
@@ -350,7 +352,9 @@ void loop() {
 
   //DC Motor Angle
   float encoder = myEnc.read();
-  if(isAngle){
+  if (system_state == SENSOR_CTR)
+    analogWrite(motorSpeedPin, PWM);
+  else if(isAngle){
     float encoderGoal = angle*encoderRatio;
     float error = encoderGoal - encoder;
     float u = -KpAngle*error - KiAngle*errorSum - KdAngle*(error-lastError);
