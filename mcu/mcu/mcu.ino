@@ -179,6 +179,8 @@ void setup() {
   rot_prev = digitalRead(ROT_CLK);
   sg90.attach(servoPin);
   stepper.begin(command_rpm(5), FULL_STEP);
+
+  myEnc.write(0);
 }
 
 void loop() {
@@ -324,7 +326,7 @@ void loop() {
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'a') {
         // DC angle message
-        int dcPos = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
+        angle = (float)(parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx));
         myEnc.write(0);
         errorSum = 0;
         lastError = 0;
@@ -332,7 +334,7 @@ void loop() {
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
         // DC velocity message
-        int vel = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
+        vel = (float)(parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx));
         myEnc.write(0);
         errorSum = 0;
         lastError = 0;
@@ -353,6 +355,11 @@ void loop() {
     float error = encoderGoal - encoder;
     float u = -KpAngle*error - KiAngle*errorSum - KdAngle*(error-lastError);
     PWM = abs(u);
+    if (u < 0) {
+      digitalWrite(directionPin, LOW);
+    } else {
+      digitalWrite(directionPin, HIGH);
+    }
     analogWrite(motorSpeedPin, PWM);
     errorSum += error;
     lastError = error;
