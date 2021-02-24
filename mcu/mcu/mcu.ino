@@ -1,5 +1,6 @@
 #include <Servo.h>
 #include <Arduino.h>
+#include <Encoder.h>
 #include "A4988.h"
 // using a 200-step motor (most common)
 #define MOTOR_STEPS 200
@@ -24,6 +25,9 @@
 #define SENSOR_CTR 0
 
 #define SERIAL_BUF_LEN 100
+
+#define encoder0PinA 18
+#define encoder0PinB 19
 
 int rot_curr;
 int rot_prev;
@@ -59,6 +63,26 @@ void init_ir_window(){
     ir_window[i] = 0;
   }
 }
+
+//DC Motor variables
+int directionPin = 12;
+int brakePin = 9;
+int motorSpeedPin = 3;
+Encoder myEnc(18,19);
+float encoderRatio = 465.0/360.0;
+float KpAngle = 1.;
+float KiAngle = 0.005;
+float KdAngle = 0;
+float KpSpeed = 0.01;
+float KiSpeed = 1;
+float KdSpeed = 0;
+float errorSum = 0.;
+float lastError = 0.;
+float angle = 0.;
+float vel = 0.;
+float lastEncoder = 0;
+float PWM = 0;
+bool isAngle = true;
 
 void increment_ir_entry(){
   ir_curr_entry += 1;
@@ -149,6 +173,9 @@ void setup() {
   pinMode(ROT_DT, INPUT);
   pinMode(SW_PIN, INPUT);
   pinMode(IR_PIN, INPUT);
+  pinMode(encoder0PinA, INPUT); 
+  pinMode(encoder0PinB, INPUT); 
+  float encoderStart = myEnc.read();
   rot_prev = digitalRead(ROT_CLK);
   sg90.attach(servoPin);
   stepper.begin(command_rpm(5), FULL_STEP);
@@ -298,10 +325,18 @@ void loop() {
                  serialBuf[serialConsumerIdx + 1] + 128 == 'a') {
         // DC angle message
         int dcPos = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
+        myEnc.write(0);
+        errorSum = 0;
+        lastError = 0;
+        isAngle = true;
       } else if (serialBuf[serialConsumerIdx] + 128 == 'd' &&
                  serialBuf[serialConsumerIdx + 1] + 128 == 'v') {
         // DC velocity message
         int vel = parse_int(serialBuf + serialConsumerIdx + 2, newlineIdx - 2 - serialConsumerIdx);
+        myEnc.write(0);
+        errorSum = 0;
+        lastError = 0;
+        isAngle = false;
       }
       serialConsumerIdx = newlineIdx + 1;
     }
@@ -311,6 +346,33 @@ void loop() {
   rot_prev = rot_curr;
   sg90.write(servoPos);
 
+  //DC Motor Angle
+  float encoder = myEnc.read();
+  if(isAngle){
+    float encoderGoal = angle*encoderRatio;
+    float error = encoderGoal - encoder;
+    float u = -KpAngle*error - KiAngle*errorSum - KdAngle*(error-lastError);
+    PWM = abs(u);
+    analogWrite(motorSpeedPin, PWM);
+    errorSum += error;
+    lastError = error;
+  }
+  // DC Motor Velocity
+  else{
+    float speedGoal = vel*465.;
+    if(speedGoal < 0){digitalWrite(directionPin, LOW);}
+    else{digitalWrite(directionPin, HIGH);}
+    
+    float encoder = myEnc.read();
+    float realSpeed = (encoder-lastEncoder)/0.15;
+    float error = speedGoal - abs(realSpeed);
+    float u = KpSpeed*error + KiSpeed*errorSum + KdSpeed*(error-lastError);
+    PWM += u;
+    analogWrite(motorSpeedPin, PWM);
+    lastEncoder = encoder;
+  }
+  
   ir_cm_prev = ir_cm;
   delay(15);
+  
 }
