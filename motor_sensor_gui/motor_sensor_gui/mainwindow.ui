@@ -106,7 +106,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Desired DC Motor Velocity (deg/s)</string>
+     <string>Desired DC Motor Velocity (rev/s)</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="dcAngleLineEdit">

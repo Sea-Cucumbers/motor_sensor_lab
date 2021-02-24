@@ -144,7 +144,7 @@ public:
         potentiometerLabel->setText(QCoreApplication::translate("MainWindow", "Potentiometer Angle", nullptr));
         servoAngleLabel->setText(QCoreApplication::translate("MainWindow", "Desired Servo Angle (deg)", nullptr));
         dcAngleLabel->setText(QCoreApplication::translate("MainWindow", "Desired DC Motor Angle (deg)", nullptr));
-        dcVelocityLabel->setText(QCoreApplication::translate("MainWindow", "Desired DC Motor Velocity (deg/s)", nullptr));
+        dcVelocityLabel->setText(QCoreApplication::translate("MainWindow", "Desired DC Motor Velocity (rev/s)", nullptr));
         servoPushButton->setText(QCoreApplication::translate("MainWindow", "Command Servo", nullptr));
         dcVelocityPushButton->setText(QCoreApplication::translate("MainWindow", "Command DC Motor Velocity", nullptr));
         stepperDisplacementLabel->setText(QCoreApplication::translate("MainWindow", "Desired Stepper Displacement (deg)", nullptr));

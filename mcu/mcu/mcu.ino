@@ -70,11 +70,11 @@ int brakePin = 9;
 int motorSpeedPin = 3;
 Encoder myEnc(18,19);
 float encoderRatio = 465.0/360.0;
-float KpAngle = 1.;
-float KiAngle = 0.005;
+float KpAngle = 1.1;
+float KiAngle = 0.;//005;
 float KdAngle = 0;
 float KpSpeed = 0.01;
-float KiSpeed = 1;
+float KiSpeed = 0.;
 float KdSpeed = 0;
 float errorSum = 0.;
 float lastError = 0.;
@@ -370,8 +370,12 @@ void loop() {
   }
   // DC Motor Velocity
   else{
-    float speedGoal = vel*465.;
-    if(speedGoal < 0){digitalWrite(directionPin, LOW);}
+    float speedGoal = vel*465./10.;
+    if(speedGoal == 0){
+      analogWrite(motorSpeedPin,0);
+      digitalWrite(brakePin,HIGH);
+    }
+    else if(speedGoal < 0){digitalWrite(directionPin, LOW);}
     else{digitalWrite(directionPin, HIGH);}
     
     float encoder = myEnc.read();
